@@ -1,0 +1,31 @@
+{
+  "$comment": "Local TTS regeneration. Existing audio is adopted in regen/manifest.json; later runs regenerate only changed text.",
+  "exclude": {
+    "categories": [
+      "answers"
+    ],
+    "textIds": []
+  },
+  "languages": {
+    "sw-TZ": {
+      "provider": "gemini",
+      "model": "gemini-2.5-flash-preview-tts",
+      "voice": "Kore",
+      "instructions": "Speak clearly, warmly, and naturally in Swahili.",
+      "format": "wav",
+      "wordHighlighting": false
+    }
+  },
+  "providers": {
+    "openai": {
+      "apiKeyEnv": "OPENAI_API_KEY"
+    },
+    "gemini": {
+      "apiKeyEnv": "GEMINI_API_KEY",
+      "note": "Gemini TTS uses GEMINI_API_KEY; word highlighting still uses OPENAI_API_KEY (Whisper)."
+    }
+  },
+  "whisper": {
+    "apiKeyEnv": "OPENAI_API_KEY"
+  }
+}
