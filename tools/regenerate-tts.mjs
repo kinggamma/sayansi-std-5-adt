@@ -59,18 +59,119 @@ const NAMED_HTML_ENTITIES = {
   nbsp: " ",
 }
 
+const SW_CARDINAL_WORDS = [
+  "moja", "mbili", "tatu", "nne", "tano", "sita", "saba", "nane", "tisa", "kumi",
+  "kumi na moja", "kumi na mbili", "kumi na tatu", "kumi na nne", "kumi na tano",
+  "kumi na sita", "kumi na saba", "kumi na nane", "kumi na tisa", "ishirini",
+  "ishirini na moja", "ishirini na mbili", "ishirini na tatu", "ishirini na nne", "ishirini na tano",
+]
+const ROMAN_NUMERAL_VALUES = { i: 1, ii: 2, iii: 3, iv: 4, v: 5, vi: 6, vii: 7, viii: 8, ix: 9, x: 10 }
+// Bare single-letter list markers like "(a)" or "f." get sounded out with Swahili
+// vowel/consonant phonetics by the TTS, which reads badly. Spell the ENGLISH
+// letter name out phonetically instead so it reads as "ay", "bee", "cee", etc.
+const ENGLISH_LETTER_NAMES = {
+  a: "Ei", b: "Bii", c: "Sii", d: "Dii", e: "Ii", f: "Efu", g: "Jii", h: "Echi",
+  i: "Ai", j: "Jei", k: "Kei", l: "Elu", m: "Emu", n: "Enu", o: "Ou", p: "Pii",
+  q: "Kyuu", r: "Aru", s: "Esu", t: "Tii", u: "Yuu", v: "Vii", w: "Dabuluyu",
+  x: "Eksi", y: "Wai", z: "Zedi",
+}
+// A handful of table-column abbreviations ("Na" for "Namba", "No." for the
+// same) are ordinary Swahili/English words on their own, so the TTS reads "Na"
+// as the conjunction "na" (and) instead of the abbreviation it stands for.
+const SPEECH_TEXT_OVERRIDES = {
+  pg002_n0003: "Namba ya kimataifa ya kitabu ni: mia tisa sabini na nane; elfu tisa mia tisa na kumi na mbili; mia saba sitini na tano; sifuri nane; tano.",
+  pg002_n0003_easy_read: "Namba ya kimataifa ya kitabu ni: mia tisa sabini na nane; elfu tisa mia tisa na kumi na mbili; mia saba sitini na tano; sifuri nane; tano.",
+  pg002_n0008: "Sanduku la Posta namba elfu thelathini na tano, tisini na nne.",
+  pg002_n0008_easy_read: "Sanduku la Posta namba elfu thelathini na tano, tisini na nne.",
+  pg020_n0025: "Kuanzia kumi na moja hadi kumi na tano.",
+  pg020_n0025_easy_read: "Kuanzia kumi na moja hadi kumi na tano.",
+  pg041_n0018: "Namba",
+  pg042_n0004: "Namba",
+  pg043_n0020: "Namba",
+  pg043_n0020_easy_read: "Namba",
+  pg044_n0004: "Namba",
+  pg044_n0004_easy_read: "Namba",
+  pg070_n0019: "Zingatia kwamba katika mahesabu, operata ya alama ya nyota imetumika kuwakilisha kuzidisha badala ya alama ya kuzidisha inayotumika katika hisabati.",
+  pg070_n0019_easy_read: "Katika programu, alama ya nyota inatumika kuonyesha kuzidisha.",
+  pg086_n0051: "Mfuatano.",
+  pg086_n0067: "Chora maumbo mbalimbali kwa kubadilisha thamani ya pande.",
+  pg086_n0067_easy_read: "Chora maumbo mbalimbali kwa kubadilisha thamani ya pande.",
+}
+
+// Gemini/Kore occasionally returns no audio for isolated serial-number
+// utterances. Keep Gemini, but use another supported voice for the two ISBN
+// variants that repeatedly fail with the book's default voice.
+const SPEECH_SETTINGS_OVERRIDES = {
+  pg002_n0003: {
+    provider: "gemini",
+    model: "gemini-2.5-flash-preview-tts",
+    voice: "Aoede",
+    instructions: "Speak clearly, warmly, and naturally in Swahili.",
+    format: "wav",
+  },
+  pg002_n0003_easy_read: {
+    provider: "gemini",
+    model: "gemini-2.5-flash-preview-tts",
+    voice: "Aoede",
+    instructions: "Speak clearly, warmly, and naturally in Swahili.",
+    format: "wav",
+  },
+}
+
 // Must match normalizeRegenSpeechText in regen-emit.ts. Exported texts can
 // contain rendered MathML, but TTS providers need the visible text, not tags.
 function normalizeRegenSpeechText(text) {
   const withoutMarkup = stripEmojis(String(text || "")).replace(/<\/?[A-Za-z][^>]*>/g, " ")
-  const decoded = withoutMarkup.replace(HTML_ENTITY_RE, (match, decimal, hex, named) => {
+  // A bare list marker like "1." with nothing else has no context for the TTS to
+  // tell it's a list item, so it gets read as a clock time ("saa moja"). Speak the
+  // plain Swahili cardinal word instead (e.g. "1." -> "moja", not the ordinal "kwanza").
+  const bareOrdinalMatch = /^(\d{1,2})\.$/.exec(withoutMarkup.trim())
+  const ordinalWord = bareOrdinalMatch ? SW_CARDINAL_WORDS[Number(bareOrdinalMatch[1]) - 1] : undefined
+  const withoutBareOrdinal = ordinalWord ?? withoutMarkup
+  // A range marker like "6-10" or "21+" (day-range table headers) gets read as
+  // two/three separate digits with no "hadi" (to) between them. Speak it as
+  // "sita hadi kumi" / "ishirini na moja na kuendelea" instead.
+  const rangeMatch = /^(\d{1,2})\s*-\s*(\d{1,2})$/.exec(withoutBareOrdinal.trim())
+  const rangeWords = rangeMatch
+    ? `${SW_CARDINAL_WORDS[Number(rangeMatch[1]) - 1]} hadi ${SW_CARDINAL_WORDS[Number(rangeMatch[2]) - 1]}`
+    : undefined
+  const withoutRange = rangeWords ?? withoutBareOrdinal
+  const openRangeMatch = /^(\d{1,2})\s*\+$/.exec(withoutRange.trim())
+  const openRangeWords = openRangeMatch ? `${SW_CARDINAL_WORDS[Number(openRangeMatch[1]) - 1]} na kuendelea` : undefined
+  const withoutOpenRange = openRangeWords ?? withoutRange
+  // A bare roman numeral list marker like "(i)" or "v" has no context for the TTS
+  // either, and gets mangled trying to sound out "i"/"v" as English letters. Speak
+  // it out as the plain Swahili cardinal word instead (e.g. "(iii)" -> "tatu").
+  const romanMatch = /^\(?([ivx]+)\)?\.?$/i.exec(withoutOpenRange.trim())
+  const romanValue = romanMatch ? ROMAN_NUMERAL_VALUES[romanMatch[1].toLowerCase()] : undefined
+  const romanWord = romanValue ? SW_CARDINAL_WORDS[romanValue - 1] : undefined
+  const withoutRoman = romanWord ?? withoutOpenRange
+  // A bare single-letter list marker like "(a)" or "f." has the same problem —
+  // speak the English letter name instead of sounding it out with Swahili phonetics.
+  const bareLetterMatch = /^\(?([a-z])\)?\.?$/i.exec(withoutRoman.trim())
+  const letterWord = bareLetterMatch ? ENGLISH_LETTER_NAMES[bareLetterMatch[1].toLowerCase()] : undefined
+  const withoutBareLetter = letterWord ?? withoutRoman
+  // A numbered list item like "1. Karatasi safi za rangi..." has the leading
+  // digit marker silently dropped by the TTS instead of being read out loud.
+  // Spell that leading number out as a word so it actually gets voiced.
+  const leadingNumberMatch = /^(\d{1,2})\.\s+(\S.*)$/s.exec(withoutBareLetter.trim())
+  const leadingNumberWord = leadingNumberMatch ? SW_CARDINAL_WORDS[Number(leadingNumberMatch[1]) - 1] : undefined
+  const withoutLeadingNumber = leadingNumberMatch && leadingNumberWord
+    ? `${leadingNumberWord[0].toUpperCase()}${leadingNumberWord.slice(1)}. ${leadingNumberMatch[2]}`
+    : withoutBareLetter
+  const decoded = withoutLeadingNumber.replace(HTML_ENTITY_RE, (match, decimal, hex, named) => {
     if (decimal || hex) {
       const codePoint = Number.parseInt(decimal ?? hex, decimal ? 10 : 16)
       return codePoint <= 0x10FFFF ? String.fromCodePoint(codePoint) : match
     }
     return named ? (NAMED_HTML_ENTITIES[named.toLowerCase()] ?? match) : match
   })
-  return decoded.replace(/\s+/g, " ").trim()
+  return decoded
+    .replace(/\bKAS\b/g, "kas")
+    .replace(/\bKUS\b/g, "kus")
+    .replace(/\bgameti ume\b/gi, "gameti ya kiume")
+    .replace(/\s+/g, " ")
+    .trim()
 }
 
 function isSpeakableText(text) {
@@ -524,7 +625,7 @@ async function main() {
       if (onlyId && textId !== onlyId) continue
       try {
         const raw = texts[textId]
-        const sanitized = normalizeRegenSpeechText(raw)
+        const sanitized = SPEECH_TEXT_OVERRIDES[textId] ?? normalizeRegenSpeechText(raw)
         const speakable = isSpeakableText(sanitized)
         const excluded = isTtsExcluded(textId, exclude)
         let hasAudio = audios[textId] !== undefined
@@ -595,9 +696,9 @@ async function main() {
           existingFormat,
         )
         const configOverridesEntry = !sameSpeechSettings(configSettings, entryConfigBaseline)
-        const settings = configOverridesEntry
+        const settings = SPEECH_SETTINGS_OVERRIDES[textId] ?? (configOverridesEntry
           ? configSettings
-          : normalizeSpeechSettings(storedEntrySettings[textId] || configSettings, existingFormat)
+          : normalizeSpeechSettings(storedEntrySettings[textId] || configSettings, existingFormat))
         const fmt = assertSafeSegment(settings.format, SAFE_FORMAT_RE, `audio format for ${textId}`)
         const fileName = existingFileName && fmtOf(existingFileName) === fmt
           ? existingFileName
@@ -705,7 +806,7 @@ async function main() {
                   fileName,
                   whisperKey,
                   getBaseLanguage(lang),
-                  normalizeRegenSpeechText(texts[id]),
+                  SPEECH_TEXT_OVERRIDES[id] ?? normalizeRegenSpeechText(texts[id]),
                 )
                 if (words.length > 0) {
                   timecodes[id] = { timecodes: [null, { word_timestamps: words }] }
