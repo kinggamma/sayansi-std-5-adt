@@ -79,10 +79,37 @@ const ENGLISH_LETTER_NAMES = {
 // same) are ordinary Swahili/English words on their own, so the TTS reads "Na"
 // as the conjunction "na" (and) instead of the abbreviation it stands for.
 const SPEECH_TEXT_OVERRIDES = {
+  pg002_n0001: "Hakimiliki, Taasisi ya Elimu Tanzania, mwaka elfu mbili ishirini na tano.",
+  pg002_n0001_easy_read: "Hakimiliki, Taasisi ya Elimu Tanzania, mwaka elfu mbili ishirini na tano.",
+  pg002_n0011: "Namba ya simu ni: saba tatu tano; sifuri nne moja; moja saba sifuri.",
+  pg002_n0011_easy_read: "Namba ya simu ni: saba tatu tano; sifuri nne moja; moja saba sifuri.",
+  pg002_n0011b: "Namba nyingine ya simu ni: saba tatu tano; sifuri nne moja; moja sita nane.",
+  pg002_n0011b_easy_read: "Namba nyingine ya simu ni: saba tatu tano; sifuri nne moja; moja sita nane.",
   pg002_n0003: "Namba ya kimataifa ya kitabu ni: mia tisa sabini na nane; elfu tisa mia tisa na kumi na mbili; mia saba sitini na tano; sifuri nane; tano.",
   pg002_n0003_easy_read: "Namba ya kimataifa ya kitabu ni: mia tisa sabini na nane; elfu tisa mia tisa na kumi na mbili; mia saba sitini na tano; sifuri nane; tano.",
   pg002_n0008: "Sanduku la Posta namba elfu thelathini na tano, tisini na nne.",
   pg002_n0008_easy_read: "Sanduku la Posta namba elfu thelathini na tano, tisini na nne.",
+  pg009_n0017: "Kinywa.",
+  pg068_n0003: "Zoezi la kwanza.",
+  pg053_n0034: "Kazi ya kufanya namba tatu:",
+  pg053_n0034_easy_read: "Kazi ya kufanya namba tatu:",
+  pg064_n0002: "Zoezi la marudio.",
+  pg085_n0020: "Zoezi la marudio.",
+  pg015_n0009: "Chaguo: mfuko wa tumbo.",
+  pg015_n0023: "Chaguo: mfuko wa tumbo.",
+  pg015_n0043: "Chaguo: mfuko wa tumbo.",
+  pg015_n0057: "Chaguo: mfuko wa tumbo.",
+  gl197: "Chaguo: mfuko wa tumbo.",
+  pg015_n0009_easy_read: "Chaguo: mfuko wa tumbo.",
+  pg015_n0023_easy_read: "Chaguo: mfuko wa tumbo.",
+  pg015_n0043_easy_read: "Chaguo: mfuko wa tumbo.",
+  pg015_n0057_easy_read: "Chaguo: mfuko wa tumbo.",
+  pg016_n0035: "Ogani katika mwili wa binadamu au mnyama inayozalisha homoni kwa ajili ya kazi maalumu za mwili.",
+  pg015_n0034: "Ipi kati ya zifuatazo ni sehemu ya mfumo wa mmeng’enyo wa chakula ambayo mabaki ya chakula ambayo hakijafyonzwa, na kisichoweza kumeng’enywa, huandaliwa kwa ajili ya kutolewa nje ya mwili?",
+  pg018_n0002: "Mabadiliko ya mwili na tabia.",
+  pg062_n0011: "Sumaku.",
+  pg066_n0002: "Sura ya Tano.",
+  pg067_n0016: "Bofya bloku la Mwendo.",
   pg020_n0025: "Kuanzia kumi na moja hadi kumi na tano.",
   pg020_n0025_easy_read: "Kuanzia kumi na moja hadi kumi na tano.",
   pg041_n0018: "Namba",
@@ -101,6 +128,13 @@ const SPEECH_TEXT_OVERRIDES = {
 // Gemini/Kore occasionally returns no audio for isolated serial-number
 // utterances. Keep Gemini, but use another supported voice for the two ISBN
 // variants that repeatedly fail with the book's default voice.
+const FALLBACK_VOICE = {
+  provider: "gemini",
+  model: "gemini-2.5-flash-preview-tts",
+  voice: "Aoede",
+  instructions: "Speak clearly, warmly, and naturally in Swahili.",
+  format: "wav",
+}
 const SPEECH_SETTINGS_OVERRIDES = {
   pg002_n0003: {
     provider: "gemini",
@@ -116,6 +150,45 @@ const SPEECH_SETTINGS_OVERRIDES = {
     instructions: "Speak clearly, warmly, and naturally in Swahili.",
     format: "wav",
   },
+  pg002_n0011: {
+    provider: "gemini",
+    model: "gemini-2.5-flash-preview-tts",
+    voice: "Aoede",
+    instructions: "Speak clearly, warmly, and naturally in Swahili.",
+    format: "wav",
+  },
+  pg002_n0011_easy_read: {
+    provider: "gemini",
+    model: "gemini-2.5-flash-preview-tts",
+    voice: "Aoede",
+    instructions: "Speak clearly, warmly, and naturally in Swahili.",
+    format: "wav",
+  },
+  pg002_n0011b: {
+    provider: "gemini",
+    model: "gemini-2.5-flash-preview-tts",
+    voice: "Aoede",
+    instructions: "Speak clearly, warmly, and naturally in Swahili.",
+    format: "wav",
+  },
+  pg002_n0011b_easy_read: {
+    provider: "gemini",
+    model: "gemini-2.5-flash-preview-tts",
+    voice: "Aoede",
+    instructions: "Speak clearly, warmly, and naturally in Swahili.",
+    format: "wav",
+  },
+  pg015_n0009: FALLBACK_VOICE,
+  pg015_n0023: FALLBACK_VOICE,
+  pg015_n0043: FALLBACK_VOICE,
+  pg015_n0057: FALLBACK_VOICE,
+  gl197: FALLBACK_VOICE,
+  pg015_n0009_easy_read: FALLBACK_VOICE,
+  pg015_n0023_easy_read: FALLBACK_VOICE,
+  pg015_n0043_easy_read: FALLBACK_VOICE,
+  pg015_n0057_easy_read: FALLBACK_VOICE,
+  pg062_n0011: FALLBACK_VOICE,
+  pg067_n0016: FALLBACK_VOICE,
 }
 
 // Must match normalizeRegenSpeechText in regen-emit.ts. Exported texts can
@@ -126,8 +199,16 @@ function normalizeRegenSpeechText(text) {
   // tell it's a list item, so it gets read as a clock time ("saa moja"). Speak the
   // plain Swahili cardinal word instead (e.g. "1." -> "moja", not the ordinal "kwanza").
   const bareOrdinalMatch = /^(\d{1,2})\.$/.exec(withoutMarkup.trim())
-  const ordinalWord = bareOrdinalMatch ? SW_CARDINAL_WORDS[Number(bareOrdinalMatch[1]) - 1] : undefined
-  const withoutBareOrdinal = ordinalWord ?? withoutMarkup
+  const bareOrdinalNumber = bareOrdinalMatch ? Number(bareOrdinalMatch[1]) : undefined
+  const ordinalWord = bareOrdinalMatch ? SW_CARDINAL_WORDS[bareOrdinalNumber - 1] : undefined
+  // The bare word "mbili" on its own is consistently mis-synthesized by this
+  // book's Gemini voice as the unrelated word "mwili"/"mili" (body) — a
+  // hallucination on a short, context-poor utterance, the same failure mode
+  // documented elsewhere in this file. Every other bare cardinal (moja, tatu,
+  // nne, tano, ...) is unaffected, so only "2." gets the extra "Namba" prefix
+  // for context; this matches the existing "Na"/"No." -> "Namba" convention.
+  const ordinalWordFixed = bareOrdinalNumber === 2 ? "Namba mbili" : ordinalWord
+  const withoutBareOrdinal = ordinalWordFixed ?? withoutMarkup
   // A range marker like "6-10" or "21+" (day-range table headers) gets read as
   // two/three separate digits with no "hadi" (to) between them. Speak it as
   // "sita hadi kumi" / "ishirini na moja na kuendelea" instead.

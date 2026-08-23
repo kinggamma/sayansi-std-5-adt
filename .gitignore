@@ -3,3 +3,6 @@
 .env.*
 !.env.example
 *.key
+
+# Local task notes for AI agents, not part of the bundle
+MABORESHO_TASK.md
