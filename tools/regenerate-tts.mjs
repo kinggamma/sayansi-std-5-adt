@@ -79,6 +79,16 @@ const ENGLISH_LETTER_NAMES = {
 // same) are ordinary Swahili/English words on their own, so the TTS reads "Na"
 // as the conjunction "na" (and) instead of the abbreviation it stands for.
 const SPEECH_TEXT_OVERRIDES = {
+  pg011_n0010: "Kinyesi hutolewa nje ya mwili, kupitia njia ya kutolea haja kubwa.",
+  pg011_n0010_easy_read: "Kinyesi hutolewa nje ya mwili, kupitia njia ya kutolea haja kubwa.",
+  pg033_n0002: "Zoezi namba mbili.",
+  pg045_n0002: "Zoezi namba mbili.",
+  pg030_n0004: "Hedhi ni mchakato wa asili wa kibaiolojia wa utokaji wa damu iliyochanganyika na uteute, kutoka kwenye ukuta wa uterasi, kupitia uke.",
+  pg049_n0006: "Ei. Ugonjwa wa nimonia.",
+  pg083_n0020: "Ukigeuka kwa nyuzi mbili kila wakati, rudia mara mia moja themanini.",
+  pg083_n0020_easy_read: "Ukigeuka kwa nyuzi mbili kila wakati, rudia mara mia moja themanini.",
+  pg083_n0023: "Ukigeuka kwa nyuzi tatu, rudia mara mia moja ishirini, na kadhalika.",
+  pg083_n0023_easy_read: "Ukigeuka kwa nyuzi tatu, rudia mara mia moja ishirini, na kadhalika.",
   pg002_n0001: "Hakimiliki, Taasisi ya Elimu Tanzania, mwaka elfu mbili ishirini na tano.",
   pg002_n0001_easy_read: "Hakimiliki, Taasisi ya Elimu Tanzania, mwaka elfu mbili ishirini na tano.",
   pg002_n0011: "Namba ya simu ni: saba tatu tano; sifuri nne moja; moja saba sifuri.",
@@ -178,6 +188,7 @@ const SPEECH_SETTINGS_OVERRIDES = {
     instructions: "Speak clearly, warmly, and naturally in Swahili.",
     format: "wav",
   },
+  pg049_n0006: FALLBACK_VOICE,
   pg015_n0009: FALLBACK_VOICE,
   pg015_n0023: FALLBACK_VOICE,
   pg015_n0043: FALLBACK_VOICE,
@@ -232,10 +243,29 @@ function normalizeRegenSpeechText(text) {
   const bareLetterMatch = /^\(?([a-z])\)?\.?$/i.exec(withoutRoman.trim())
   const letterWord = bareLetterMatch ? ENGLISH_LETTER_NAMES[bareLetterMatch[1].toLowerCase()] : undefined
   const withoutBareLetter = letterWord ?? withoutRoman
+  // A roman-numeral list item like "(i) msichana" has the same marker-plus-text
+  // problem as the leading-digit case below. Checked before the letter-marker
+  // case so single-letter roman numerals (i, v, x) resolve as numbers, not
+  // English letter names — matches this file's existing bare-marker precedence.
+  const leadingRomanMatch = /^\(?([ivx]+)\)\s+(\S.*)$/is.exec(withoutBareLetter.trim())
+  const leadingRomanValue = leadingRomanMatch ? ROMAN_NUMERAL_VALUES[leadingRomanMatch[1].toLowerCase()] : undefined
+  const leadingRomanWord = leadingRomanValue ? SW_CARDINAL_WORDS[leadingRomanValue - 1] : undefined
+  const withoutLeadingRoman = leadingRomanMatch && leadingRomanWord
+    ? `${leadingRomanWord[0].toUpperCase()}${leadingRomanWord.slice(1)}. ${leadingRomanMatch[2]}`
+    : withoutBareLetter
+  // A lettered list item like "(a) Nimonia" has the same problem as the bare
+  // letter marker above, but combined with real text in one span instead of
+  // split into two — the TTS can't tell "(a)" is a marker and hallucinates
+  // instead of reading it, so speak the English letter name as a lead-in.
+  const leadingLetterMatch = /^\(?([a-z])\)\s+(\S.*)$/is.exec(withoutLeadingRoman.trim())
+  const leadingLetterWord = leadingLetterMatch ? ENGLISH_LETTER_NAMES[leadingLetterMatch[1].toLowerCase()] : undefined
+  const withoutLeadingLetter = leadingLetterMatch && leadingLetterWord
+    ? `${leadingLetterWord}. ${leadingLetterMatch[2]}`
+    : withoutLeadingRoman
   // A numbered list item like "1. Karatasi safi za rangi..." has the leading
   // digit marker silently dropped by the TTS instead of being read out loud.
   // Spell that leading number out as a word so it actually gets voiced.
-  const leadingNumberMatch = /^(\d{1,2})\.\s+(\S.*)$/s.exec(withoutBareLetter.trim())
+  const leadingNumberMatch = /^(\d{1,2})\.\s+(\S.*)$/s.exec(withoutLeadingLetter.trim())
   const leadingNumberWord = leadingNumberMatch ? SW_CARDINAL_WORDS[Number(leadingNumberMatch[1]) - 1] : undefined
   const withoutLeadingNumber = leadingNumberMatch && leadingNumberWord
     ? `${leadingNumberWord[0].toUpperCase()}${leadingNumberWord.slice(1)}. ${leadingNumberMatch[2]}`
