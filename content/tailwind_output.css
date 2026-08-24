@@ -7085,3 +7085,31 @@ math mtable { line-height: normal; }
 /* Wide sums scroll instead of overflowing the reading column. */
 math[display="block"] { display: block math; overflow-x: auto; max-width: 100%; }
 }
+/* Book-wide consistent page width: every page's <main class="w-full"> otherwise
+   stretches edge-to-edge, so full-bleed elements (chapter-divider color bands,
+   etc.) looked wider/shifted relative to normal boxed reading content. 64rem
+   matches max-w-5xl, this book's dominant content-column width convention. */
+main.w-full {
+  max-width: 64rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Book-wide decorative edge glow (matches pg002_sec001's inside-cover styling),
+   applied once here instead of per-page so every page picks it up uniformly. */
+body::before, body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 6rem;
+  pointer-events: none;
+  z-index: 0;
+}
+body::before {
+  left: 0;
+  background: linear-gradient(to right, rgba(110, 231, 183, 0.35), rgba(209, 250, 229, 0.15), transparent);
+}
+body::after {
+  right: 0;
+  background: linear-gradient(to left, rgba(110, 231, 183, 0.35), rgba(209, 250, 229, 0.15), transparent);
+}
