@@ -79,6 +79,7 @@ const ENGLISH_LETTER_NAMES = {
 // same) are ordinary Swahili/English words on their own, so the TTS reads "Na"
 // as the conjunction "na" (and) instead of the abbreviation it stands for.
 const SPEECH_TEXT_OVERRIDES = {
+  pg001_im001: "Cheti cha ithibati cha Wizara ya Elimu, Sayansi na Teknolojia kwa kitabu cha Sayansi, Kitabu cha Mwanafunzi, Darasa la Tano, namba elfu mbili na hamsini na sita, kikiwa na taarifa za uchapisho, ISBN, tarehe thelathini na moja Mei, mwaka elfu mbili ishirini na tano, na saini ya Kamishna wa Elimu Dkt. Lyabwene M. Mtabhwa.",
   pg011_n0010: "Kinyesi hutolewa nje ya mwili, kupitia njia ya kutolea haja kubwa.",
   pg011_n0010_easy_read: "Kinyesi hutolewa nje ya mwili, kupitia njia ya kutolea haja kubwa.",
   pg033_n0002: "Zoezi namba mbili.",
@@ -103,6 +104,8 @@ const SPEECH_TEXT_OVERRIDES = {
   pg068_n0003: "Zoezi la kwanza.",
   pg053_n0034: "Kazi ya kufanya namba tatu:",
   pg053_n0034_easy_read: "Kazi ya kufanya namba tatu:",
+  pg015_n0003: "Zoezi la marudio.",
+  pg067_n0013: "Angalia au sikiliza maelezo ya Kielelezo namba moja.",
   pg064_n0002: "Zoezi la marudio.",
   pg085_n0020: "Zoezi la marudio.",
   pg015_n0009: "Chaguo: mfuko wa tumbo.",
