@@ -1322,6 +1322,9 @@
   .grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+  .grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
   .grid-cols-\[2\.5rem_1fr\] {
     grid-template-columns: 2.5rem 1fr;
   }
@@ -1936,6 +1939,9 @@
   }
   .border-\[\#efb7bd\] {
     border-color: #efb7bd;
+  }
+  .border-amber-100 {
+    border-color: var(--color-amber-100);
   }
   .border-amber-200 {
     border-color: var(--color-amber-200);
@@ -5490,6 +5496,11 @@
   .max-sm\:grid-cols-1 {
     @media (width < 40rem) {
       grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+  }
+  .max-sm\:grid-cols-2 {
+    @media (width < 40rem) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
   .max-sm\:grid-cols-\[1\.75rem_1fr\] {

@@ -606,7 +606,7 @@
         "pg025_n0119": "36d51b8c44fdd7fb25dc26c9e5d6b01ea36a3a4e753a61b57d1e7866d15257df",
         "pg025_n0121": "86b92e181c9c9472d7948c431df176ac2124b0aba32ce82ce056eb403a5f890a",
         "pg025_n0123": "1dc8ad72568270a05930bdaf1a68c4aad12290bd7353be3d4ba6078b891340b2",
-        "pg025_n0124": "d35ecbec5353c7a41b7eba2ad7dbc58e019e6727451054c76e8ab5f444efb56e",
+        "pg025_n0124": "1bce739baba708315bb030ad5e6c577f574d75872e92ac140d6197d14d448507",
         "pg026_n0002": "3d336f1e654150713c0fcdf4e1b277405617dfb996cb5d2303748a951c0a3da5",
         "pg026_n0004": "8f6f407f30773d97f4543832e8426f93c4451ed4428196cd0999b2eef2ddc71c",
         "pg026_n0006": "936c5e5fd4d43e55bfbf00b4d34642492b0560e0674891eddd8cd73fc401bab9",
@@ -1742,11 +1742,11 @@
         "pg069_n0033": "53c3a029e315033a536316d0f4c668894eea4c27f100b7a8a48dc43cbc8d98b0",
         "pg069_n0034": "80edbce41f1dccfd9685cccd8b4eeca24e3593577588441d9f0ec16b4c551388",
         "pg069_n0035": "b62e1f4e8c1cb4fd01d69a146ced4e32857cccc3936ccc1bd602d7b4e41c00e3",
-        "pg069_im002": "1555564b9180ee5a10055aeeda6e011987f311fe919e50fa5d135b61623107c6",
+        "pg069_im002": "8fc7bfe7f6bf37ad6e5730ca089f19e573a191807846ae40eddedff6f0deb3df",
         "pg069_n0038": "88f12a49939e19ff5454d1b151d8fe7ae77d6278544790f375c6f986b35ef0ee",
-        "pg069_im003": "a56e5a59e48996c6176e7bf708bb77b53e4e4096b73d43c14f78a343e3321468",
+        "pg069_im003": "60ddbb5f3d7df786bba00ac7be0f5b776a7820e7eda780fb7783c6e83bfa8697",
         "pg069_n0040": "531e3497d8116e765a4d4397ba5b1b53eaa793726a34b81f50d0cfab19d5fd88",
-        "pg069_im001": "6608a9087316eb861e6843f24c5327619f9e123d6715195142297caa3d3c38fd",
+        "pg069_im001": "d8e77ac5691d70c73614dd5ad41574e4623eed7ce44cdb97cbe2ba58e354a0eb",
         "pg069_n0042": "7c3ba3624ace7383ecc217d1ad1b206e7e109d28fcbb7c0ce8346c364a27129f",
         "pg069_n0044": "574b5813d0de34755dd88ed142913e313538f49379078a3185628b09014230db",
         "pg069_n0045": "b1bfab8cba5d9df761848720299b2ae5d856200819dc6fbd2d24cea7031f3ff0",
@@ -1791,17 +1791,17 @@
         "pg072_n0011": "57ca96befc82e113775dd39ca5b0e5ef672677e010b2c66187ffc8a4dbf24727",
         "pg072_n0013": "3ef0bb954af9f46a21ce21172ea44c8ba23781721220fae8331ffd1f9b719550",
         "pg072_n0014": "492d7442fe41c4c0fc0c4b4a821acd71683a568e7d691587421eb56c03fe75d7",
-        "pg072_n0015": "12b53077e6b162a66acf3449b7ddf67d13202b437dc4a4b7b0fc7a129ace545e",
+        "pg072_n0015": "6140a65f56f0834b96deb24ec1b708b6949a363e98cfb09737ac1ee4ba9bdbae",
         "pg072_n0017": "2ffbba87bd3ba773c7bdae10187e98104fbc128b15dc2d833a30aa462456ddbd",
-        "pg072_n0018": "4d6b274e29060bd474c60a2cc420aa06bace05438881d0e9e268a22d2580f950",
+        "pg072_n0018": "c6cd5a6876f0c44604e632f8fafc26f390d07679bd0b6836925609245d8cd373",
         "pg072_n0020": "ebd95c56b7f8429ca32de3080e5b778246464ff68b433de09d098fa11efde724",
-        "pg072_n0021": "367028859403d60b03d61cd8afcd9c7dd24136e9732367e09e40f0dc04e3dd8f",
+        "pg072_n0021": "5811c9609f6ea93e2b1a710281e74b928f1af13bd939a8c1905a38d4a221d0ed",
         "pg072_n0022": "85d8c56307ee66937a94b75dd9bf92667de220c50ad13ffd85bfb37cc1aeffea",
         "pg072_n0024": "53c3a029e315033a536316d0f4c668894eea4c27f100b7a8a48dc43cbc8d98b0",
         "pg072_n0025": "48bf5b0f1bccccf7e8a5d6da283eb37dc89c5b1e8bc327bfeb8989b7eb01e3fc",
         "pg072_n0026": "f163c071e80ef6a72ce514c179600176a44e8ec37da0ffedd13d599bbef0db55",
         "pg072_n0027": "1f3855a806208d9843a6ce27ba54e005ff0baa6e22e22db935c0c1e067e20b64",
-        "pg072_im001": "96e2c036288b85d8b13beecd059670932b4e2772481f3bd003c74ad5e84de1f1",
+        "pg072_im001": "763fbe78742065fe31ba44fd68050cc5da648d2de16bd0ac110a36f4efaab633",
         "pg072_n0029": "05dfc44ba5f549f37d03909af75da1cd0302e5fec2c0a958a7bb418cc5193485",
         "pg073_n0003": "7d31d5b9d1a817d9f04da23a90f0120746bafab94747373b8dd1b866a4af2af1",
         "pg073_n0005": "08edacee4bbd5d9d820ecf6af6376d2bc496a69dd997c58b16764e985dea0e3c",
@@ -5315,7 +5315,8 @@
         "pg087_n0039": "65bd588100448e3651422e91f8f5c26ea7144fab4289854cdd2506e955af8206",
         "pg087_n0039_easy_read": "0c6763de23d50f284b53c1cffe1256a3d710ff80a7d5d44b58a1925b4f59b0de",
         "pg087_n0041": "2ff7b9a8ce416df1035f7c43509ca16dc736cdbd24ff6ced0f659a82d8fff97f",
-        "pg087_n0041_easy_read": "7063219ad4d2ade817109dbede3be1831b3be592bec050b88260f75f8b85d4b2"
+        "pg087_n0041_easy_read": "7063219ad4d2ade817109dbede3be1831b3be592bec050b88260f75f8b85d4b2",
+        "pg027_n0002": "421bc608412113f6af6c25726f5c40c91024eda78c145b0d45fd3cf6429f4569"
       },
       "entrySettings": {
         "pg001_n0002": {
@@ -42461,6 +42462,13 @@
           "format": "wav"
         },
         "pg087_n0041_easy_read": {
+          "provider": "gemini",
+          "model": "gemini-2.5-flash-preview-tts",
+          "voice": "Kore",
+          "instructions": "Speak clearly, warmly, and naturally in Swahili.",
+          "format": "wav"
+        },
+        "pg027_n0002": {
           "provider": "gemini",
           "model": "gemini-2.5-flash-preview-tts",
           "voice": "Kore",
@@ -79612,6 +79620,13 @@
           "format": "wav"
         },
         "pg087_n0041_easy_read": {
+          "provider": "gemini",
+          "model": "gemini-2.5-flash-preview-tts",
+          "voice": "Kore",
+          "instructions": "Speak clearly, warmly, and naturally in Swahili.",
+          "format": "wav"
+        },
+        "pg027_n0002": {
           "provider": "gemini",
           "model": "gemini-2.5-flash-preview-tts",
           "voice": "Kore",
