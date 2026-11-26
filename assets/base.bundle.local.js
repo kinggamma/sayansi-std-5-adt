@@ -51487,7 +51487,7 @@ function useAtomValueWithDelay<Value>(
 
   // src/features/dock/components/BottomDock.tsx
   var import_jsx_runtime85 = __toESM(require_jsx_runtime(), 1);
-  function ReaderDockContents() {
+  function DesktopReaderDock() {
     const features = useAtomValue(appConfigAtom).features;
     const { isSpread } = useDockContext();
     const { t } = useTranslation();
@@ -59251,6 +59251,137 @@ ${OPTION_BASE} [${MARK_ATTR}="incorrect"] {
     }
     window.addEventListener("beforeunload", teardown);
   }
+  // Responsive reader dock adapted from the Sanaa export. Use this book's
+  // own content panels, translations, playback controller and feature flags.
+  function ReaderDockContents() {
+    const { createElement: h, useSyncExternalStore } = import_react29;
+    const mobile = useSyncExternalStore(subscribeToDockWidth, isNarrowDock);
+    return h(mobile ? MobileReaderDock : DesktopReaderDock);
+  }
+  function isNarrowDock() {
+    return window.matchMedia("(max-width: 639.98px)").matches;
+  }
+  function subscribeToDockWidth(notify) {
+    const query = window.matchMedia("(max-width: 639.98px)");
+    query.addEventListener("change", notify);
+    return () => query.removeEventListener("change", notify);
+  }
+  function MobileReaderDock() {
+    const { createElement: h, Fragment, useRef, useLayoutEffect } = import_react29;
+    const { t } = useTranslation();
+    const { features } = useAtomValue(appConfigAtom);
+    const [panel, setPanel] = useAtom(dockMenuValueAtom);
+    const [sign, setSign] = useAtom(signLanguageModeAtom);
+    const hasVideo = useAtomValue(currentPageSignLanguageVideoAtom);
+    const [readAloud, setReadAloud] = useAtom(readAloudModeAtom);
+    const setPlayBar = useSetAtom(playBarVisibleAtom);
+    const { play, stop } = useAudioPlayerContext();
+    const { isTop } = useDockContext();
+    const activity = useAtomValue(activityModeAtom);
+    const submitVisible = useAtomValue(submitVisibleAtom);
+    const audioOffset = activity && submitVisible ? "calc(100% + 4rem)" : "calc(100% + .5rem)";
+    import_react29.useEffect(() => () => {
+      setPanel(current => current === "tools" ? "" : current);
+    }, [setPanel]);
+    const toolsTrigger = useRef(null);
+    const contentsTrigger = useRef(null);
+    const heading = useRef(null);
+    const returnFocus = useRef(null);
+    const close = () => setPanel("");
+    const open = (name, trigger) => {
+      returnFocus.current = trigger.current;
+      setPanel(name);
+    };
+    useLayoutEffect(() => {
+      if (panel && heading.current) heading.current.focus();
+    }, [panel]);
+    const menuLabel = t("tutorial-smart-utility-sidebar-label");
+    const contentsLabel = t("toc-title");
+    const tools = [
+      features.glossary && { key: "glossary", label: t("glossary-label"), icon: BookOpen },
+      features.readAloud && {
+        key: "audio", label: t("tts-label"), icon: readAloud ? Volume2 : VolumeX, active: readAloud,
+        select() {
+          if (readAloud) stop();
+          setReadAloud(!readAloud);
+          setPlayBar(!readAloud);
+          if (!readAloud) play();
+          close();
+        }
+      },
+      features.signLanguage && hasVideo && {
+        key: "sign", label: t("sign-language-label"), icon: Hand, active: sign,
+        select() {
+          trackToggleEvent("SignLanguage", !sign);
+          setSign(!sign);
+          close();
+        }
+      },
+      { key: "language", label: t("language-label"), icon: Languages },
+      { key: "settings", label: t("sidebar-settings"), icon: Settings }
+    ].filter(Boolean);
+    const titles = { toc: contentsLabel, tools: menuLabel };
+    for (const tool of tools) titles[tool.key] = tool.label;
+    const panes = {
+      toc: h(TocContent),
+      glossary: h(GlossaryContent),
+      language: h(LanguageContent, { onSelect: close }),
+      settings: h(SettingsContent),
+      audio: h(AudioContent)
+    };
+    const toolGrid = h("div", { className: "adt-tool-grid" },
+      tools.map(tool => h("button", {
+        key: tool.key, type: "button", className: "adt-tool-tile rounded-xl hover:bg-accent focus-visible:ring-2",
+        "aria-pressed": tool.active, onClick: tool.select || (() => setPanel(tool.key))
+      }, h(tool.icon, { className: "size-6" }), h("span", null, tool.label)))
+    );
+    const sheet = index_parts_exports3;
+    return h(Fragment, null,
+      h("style", null, `
+        .adt-drawer-backdrop { position:fixed; inset:0; z-index:60; background:rgb(0 0 0 / .36) }
+        .adt-reader-sheet { position:fixed; z-index:61; inset:auto 0 0; box-sizing:border-box; overflow:auto;
+          max-height:85dvh; padding:1rem 1rem max(1rem,env(safe-area-inset-bottom)); border-radius:1rem 1rem 0 0 }
+        .adt-reader-sheet header { display:flex; align-items:center; justify-content:space-between; gap:.5rem }
+        .adt-reader-sheet header button { min-width:44px; min-height:44px; display:grid; place-items:center }
+        .adt-sheet-pane > * { width:100%; max-width:100% }
+        .adt-tool-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:.5rem }
+        .adt-tool-tile { min-height:4.5rem; display:flex; flex-direction:column; align-items:center;
+          justify-content:center; gap:.35rem; padding:.45rem; overflow-wrap:anywhere }
+        .adt-tool-tile[aria-pressed=true] { background:var(--accent); color:var(--accent-foreground) }
+      `),
+      h(DockIconButton, { ariaLabel: contentsLabel, ref: contentsTrigger, "aria-haspopup": "dialog",
+        "aria-expanded": panel === "toc", onClick: () => open("toc", contentsTrigger) }, h(List)),
+      h("div", { className: "flex flex-1 justify-center", style: { minWidth: 0 } },
+        features.showNavigationControls && h(PageNav)),
+      h(DockIconButton, { ariaLabel: menuLabel, ref: toolsTrigger, "aria-haspopup": "dialog",
+        "aria-expanded": !!panel && panel !== "toc", onClick: () => open("tools", toolsTrigger) },
+        h(MobileToolsGridIcon)),
+      features.readAloud && readAloud && h("div", {
+        className: "absolute rounded-lg bg-popover shadow-lg",
+        style: { [isTop ? "top" : "bottom"]: audioOffset, left: "50%", transform: "translateX(-50%)" }
+      }, h(AudioContent)),
+      h(sheet.Root, { open: Boolean(panel), onOpenChange: next => { if (!next) close(); } },
+        h(sheet.Portal, { container: getChromePortalContainer() },
+          h(sheet.Backdrop, { className: "adt-drawer-backdrop" }),
+          h(sheet.Popup, { className: "adt-reader-sheet bg-popover text-popover-foreground shadow-lg",
+            "data-slot": "sheet-content", "data-side": "bottom", finalFocus: returnFocus, initialFocus: heading },
+            h("header", null,
+              h(sheet.Title, { ref: heading, tabIndex: -1, className: "text-base font-medium" }, titles[panel] || menuLabel),
+              h(sheet.Close, { "aria-label": t("shortcut-close-label"), className: "rounded-lg hover:bg-accent" }, h(X))),
+            panel === "tools" ? toolGrid : h("div", { className: "adt-sheet-pane" }, panes[panel])
+          )
+        )
+      )
+    );
+  }
+  function MobileToolsGridIcon() {
+    const h = import_react29.createElement;
+    return h("svg", { viewBox: "0 0 24 24", width: 24, height: 24, fill: "none",
+      stroke: "currentColor", strokeWidth: 2, "aria-hidden": true },
+      [[3,3], [14,3], [3,14], [14,14]].map(([x,y]) =>
+        h("rect", { key: x + "-" + y, x, y, width: 7, height: 7, rx: 1 })));
+  }
+
 })();
 /*! Bundled license information:
 
